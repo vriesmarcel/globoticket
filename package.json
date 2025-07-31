@@ -1,0 +1,21 @@
+{
+  "name": "dapr-big-picture",
+  "version": "1.0.0",
+  "description": "This application is intended to demonstrate the basics of using Dapr to build a microservices application. It is the demo project for the Pluralsight Dapr 1 Big Picture, by Marcel de Vries and Dapr 1 Fundamentals course, by Mark Heath.",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vriesmarcel/kcdc-2023.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vriesmarcel/kcdc-2023/issues"
+  },
+  "homepage": "https://github.com/vriesmarcel/kcdc-2023#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.35.1"
+  }
+}

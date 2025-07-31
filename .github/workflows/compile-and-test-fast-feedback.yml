@@ -1,0 +1,37 @@
+name: "01- Compile and Test fast feedback"
+permissions:
+  actions: write
+  contents: read
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "feature/*" ]
+    paths:
+    - 'frontend/**'
+    - 'catalog/**'
+    - 'ordering/**'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Build with dotnet
+      run: dotnet build frontend/frontend.csproj --configuration Release
+    
+    - name: add markdown report logger for frontend project
+      run: dotnet add unittests/unittests.csproj  package LiquidTestReports.Markdown
+      
+    - name: Test
+      run: dotnet test unittests/unittests.csproj --logger "liquid.md;logfilename=testResults.md" 
+    - name: Output the results to the actions jobsummary
+      if: always()
+      run: cat $(find . -name testResults.md) >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,10 @@
+bin/
+obj/
+node_modules/
+*.suo
+*.user
+*.tmp
+.vs/
+/test-results/
+/playwright-report/
+/playwright/.cache/
