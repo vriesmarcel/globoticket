@@ -3,11 +3,40 @@
   "tasks": [
     {
       "label": "build",
+      "dependsOn": ["build-frontend", "build-catalog", "build-ordering"],
+      "dependsOrder": "parallel"
+    },
+    {
+      "label": "build-frontend",
       "command": "dotnet",
       "type": "process",
       "args": [
         "build",
         "${workspaceFolder}/frontend/frontend.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build-catalog",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/catalog/catalog.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build-ordering",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/ordering/ordering.csproj",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
       ],
