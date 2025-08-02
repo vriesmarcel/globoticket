@@ -14,6 +14,19 @@ namespace GloboTicket.Catalog.DbContexts
         {
             base.OnModelCreating(modelBuilder);
 
+            // Original 5 events
+            SeedOriginalEvents(modelBuilder);
+
+            // Add more events - 500 additional events in batches
+            SeedAdditionalEvents(modelBuilder, 0, 100);
+            SeedAdditionalEvents(modelBuilder, 100, 100);
+            SeedAdditionalEvents(modelBuilder, 200, 100);
+            SeedAdditionalEvents(modelBuilder, 300, 100);
+            SeedAdditionalEvents(modelBuilder, 400, 100);
+        }
+
+        private void SeedOriginalEvents(ModelBuilder modelBuilder)
+        {
             modelBuilder.Entity<Event>().HasData(new Event
             {
                 EventId = Guid.Parse("{EE272F8B-6096-4CB6-8625-BB4BB2D89E8B}"),
@@ -68,6 +81,89 @@ namespace GloboTicket.Catalog.DbContexts
                 Description = "The critics are over the moon and so will you after you've watched this sing and dance extravaganza written by Nick Sailor, the man from 'My dad and sister'.",
                 ImageUrl = "/img/musical.jpg"
             });
+        }
+
+        private void SeedAdditionalEvents(ModelBuilder modelBuilder, int startIndex, int count)
+        {
+            var random = new Random(startIndex);
+            var artists = new string[]
+            {
+                "Taylor Swift", "Ed Sheeran", "Beyoncé", "BTS", "Drake", "Adele", "The Weeknd", "Billie Eilish",
+                "Harry Styles", "Lady Gaga", "Justin Bieber", "Ariana Grande", "Post Malone", "Bruno Mars",
+                "Dua Lipa", "Kendrick Lamar", "Rihanna", "Coldplay", "Imagine Dragons", "Katy Perry",
+                "J Balvin", "Maroon 5", "Travis Scott", "Eminem", "Bad Bunny", "Shawn Mendes", "Camila Cabello",
+                "Doja Cat", "Cardi B", "Twenty One Pilots", "Halsey", "Lewis Capaldi", "Olivia Rodrigo",
+                "Lil Nas X", "The Chainsmokers", "Calvin Harris", "SZA", "Marshmello", "Lizzo", "Blackpink",
+                "Daddy Yankee", "Sia", "Selena Gomez", "Jonas Brothers", "Future", "The Kid LAROI", "Megan Thee Stallion",
+                "Juice WRLD", "Kygo", "Miley Cyrus", "David Guetta", "Elton John", "Khalid", "Charlie Puth",
+                "Sam Smith", "Martin Garrix", "Lana Del Rey", "Niall Horan", "Ava Max", "Luke Combs", "DaBaby",
+                "Lil Baby", "Jack Harlow", "Tame Impala", "Maluma", "Rosalía", "Tones and I", "Glass Animals",
+                "Demi Lovato", "Alan Walker", "OneRepublic", "Zara Larsson", "KAROL G", "Lil Uzi Vert", "Tiësto",
+                "Alicia Keys", "5 Seconds of Summer", "Nicki Minaj", "Little Mix", "YUNGBLUD", "Kehlani",
+                "Machine Gun Kelly", "Panic! At The Disco", "Tyler, The Creator", "Bastille", "Nicky Jam",
+                "Anitta", "Troye Sivan", "Mabel", "G-Eazy", "Dan + Shay", "Meghan Trainor", "NCT 127",
+                "Avicii", "Fall Out Boy", "SEVENTEEN", "Robin Schulz", "Jason Derulo", "Offset", "Anne-Marie",
+                "Zedd", "Young Thug", "Lauv", "James Arthur", "BLACKPINK ROSÉ", "Madison Beer", "LISA", "The Script"
+            };
+
+            var tourNames = new string[]
+            {
+                "World Tour", "Live in Concert", "Reunion Tour", "Greatest Hits Tour", "The Experience",
+                "Summer Festival", "Unplugged", "Live at Home", "The Sessions", "Acoustic Night",
+                "Stadium Tour", "Farewell Tour", "Comeback Tour", "Anniversary Tour", "Legends Tour"
+            };
+
+            var descriptions = new string[]
+            {
+                "An unforgettable night with {0} showcasing their greatest hits and fan favorites. Don't miss this chance to see one of the most iconic performers of our time.",
+                "Experience the magic of {0} in this once-in-a-lifetime concert event. With stunning visuals and incredible sound, this is a show you'll remember forever.",
+                "Join {0} for an intimate evening of music and storytelling. This special event brings fans closer than ever to their favorite artist.",
+                "{0} returns to the stage with a spectacular new show featuring their latest album and classic favorites. A must-see for true fans!",
+                "The electrifying {0} brings their high-energy performance to town with special guests and surprises throughout the night."
+            };
+
+            var images = new string[]
+            {
+                "/img/banjo.jpg",
+                "/img/michael.jpg",
+                "/img/dj.jpg",
+                "/img/guitar.jpg",
+                "/img/musical.jpg"
+            };
+
+            for (int i = 0; i < count; i++)
+            {
+                int index = startIndex + i;
+                int artistIndex = index % artists.Length;
+                string artist = artists[artistIndex];
+                
+                if (index > artists.Length)
+                {
+                    int secondIndex = (index / artists.Length) % artists.Length;
+                    if (secondIndex != artistIndex)
+                    {
+                        artist = $"{artists[artistIndex]} & {artists[secondIndex]}";
+                    }
+                }
+
+                var tourName = tourNames[index % tourNames.Length];
+                var eventName = $"{artist}: {tourName}";
+                var description = string.Format(descriptions[index % descriptions.Length], artist);
+                var imageUrl = images[index % images.Length];
+                var price = 20 + ((index % 19) * 10);
+                var date = DateTime.Now.AddDays(30 + (index * 3));
+
+                modelBuilder.Entity<Event>().HasData(new Event
+                {
+                    EventId = Guid.NewGuid(),
+                    Name = eventName,
+                    Price = price,
+                    Artist = artist,
+                    Date = date,
+                    Description = description,
+                    ImageUrl = imageUrl
+                });
+            }
         }
     }
 }
