@@ -1,14 +1,28 @@
 ﻿@model GloboTicket.Frontend.Models.Api.Event
 <div class="row mt-5">
-    <div class="col-md-4">
+    <div class="col-md-4 position-relative">
         <img src="@Model.ImageUrl" class="detailImage" alt="Artist pic" />
+        @if (Model.IsOnSpecialOffer)
+        {
+            <div style="position: absolute; top: 10px; left: 10px; transform: rotate(-15deg);">
+                <span class="badge badge-danger" style="font-size: 1.5em; padding: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+                    LIMITED TIME OFFER<br/>20% OFF
+                </span>
+            </div>
+        }
     </div>
     <div class="col-md-6 ml-1">
         <div class="row">
             <div class="columnHeader">SHOW</div>
         </div>
         <div class="row mt-2 bold">
-            <h1>@Model.Name</h1>
+            <h1>
+                @Model.Name
+                @if (Model.IsOnSpecialOffer)
+                {
+                    <span class="badge badge-danger">SPECIAL OFFER</span>
+                }
+            </h1>
         </div>
         <div class="row mt-2">
             <h3>@Model.Artist</h3>
@@ -20,7 +34,25 @@
             @Model.Description
         </div>
         <div class="row mt-5">
-            <h3><span class="bold">$@Model.Price</span></h3><span class="mt-1">&nbsp;&nbsp;&nbsp; PER TICKET</span>
+            @if (Model.IsOnSpecialOffer)
+            {
+                <div>
+                    <h3>
+                        <span style="text-decoration: line-through; color: #aaa">$@Model.OriginalPrice</span>
+                        <span style="color: red; font-weight: bold;">$@Model.Price</span>
+                    </h3>
+                    <div>
+                        <span class="mt-1">&nbsp;&nbsp;&nbsp; PER TICKET</span>
+                        <span style="color: green; font-weight: bold; margin-left: 20px;">
+                            You save $@(Model.OriginalPrice - Model.Price) per ticket!
+                        </span>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <h3><span class="bold">$@Model.Price</span></h3><span class="mt-1">&nbsp;&nbsp;&nbsp; PER TICKET</span>
+            }
         </div>
     </div>
 </div>

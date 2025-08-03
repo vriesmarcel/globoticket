@@ -1,0 +1,61 @@
+@model GloboTicket.Frontend.Models.View.BasketLineViewModel
+
+<tr>
+    <td>
+        <a asp-controller="EventCatalog" asp-action="Detail" asp-route-eventId="@Model.EventId">
+            @Model.EventName
+            @if (Model.IsOnSpecialOffer)
+            {
+                <span class="badge badge-success ml-2" style="background-color: #f0ad4e;">Special Offer!</span>
+            }
+        </a>
+    </td>
+    <td>@Model.Date.DateTime.ToShortDateString()</td>
+    <td>
+        @if (Model.IsOnSpecialOffer)
+        {
+            <div>
+                <span style="text-decoration: line-through; color: #888;">$@Model.OriginalPrice</span>
+                <span style="color: #f0ad4e; font-weight: bold;">$@Model.Price</span>
+            </div>
+        }
+        else
+        {
+            <span>$@Model.Price</span>
+        }
+    </td>
+    <td>
+        <div class="input-group">
+            <form asp-action="UpdateLine" method="post">
+                <input type="hidden" name="LineId" value="@Model.LineId" />
+                <input type="hidden" name="TicketAmount" value="@(Model.Quantity - 1)" />
+                <button class="btn btn-sm btn-secondary">-</button>
+            </form>
+            <span class="input-group-addon">@Model.Quantity</span>
+            <form asp-action="UpdateLine" method="post">
+                <input type="hidden" name="LineId" value="@Model.LineId" />
+                <input type="hidden" name="TicketAmount" value="@(Model.Quantity + 1)" />
+                <button class="btn btn-sm btn-secondary">+</button>
+            </form>
+        </div>
+    </td>
+    <td>
+        @if (Model.IsOnSpecialOffer)
+        {
+            <div>
+                <span style="text-decoration: line-through; color: #888;">$@(Model.OriginalPrice * Model.Quantity)</span>
+                <span style="color: #f0ad4e; font-weight: bold;">$@(Model.Price * Model.Quantity)</span>
+            </div>
+        }
+        else
+        {
+            <span>$@(Model.Price * Model.Quantity)</span>
+        }
+    </td>
+    <td>
+        <form asp-action="RemoveLine" method="post">
+            <input type="hidden" name="LineId" value="@Model.LineId" />
+            <button class="btn btn-sm btn-danger">remove</button>
+        </form>
+    </td>
+</tr>

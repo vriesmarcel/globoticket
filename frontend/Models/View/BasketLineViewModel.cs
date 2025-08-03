@@ -9,6 +9,8 @@ namespace GloboTicket.Frontend.Models.View
         public string EventName { get; set; }
         public DateTimeOffset Date { get; set; }
         public int Price { get; set; }
+        public int OriginalPrice { get; set; }
+        public bool IsOnSpecialOffer { get; set; }
         public int Quantity { get; set; }
     }
 }

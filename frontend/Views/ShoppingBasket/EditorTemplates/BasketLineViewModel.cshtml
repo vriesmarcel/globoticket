@@ -1,9 +1,30 @@
 ﻿@model GloboTicket.Frontend.Models.View.BasketLineViewModel
 
-<tr>
-    <td>@Model.EventName</td>
+<tr class="@(Model.IsOnSpecialOffer ? "special-offer-row" : "")">
+    <td>
+        @Model.EventName
+        @if (Model.IsOnSpecialOffer)
+        {
+            <span class="badge badge-danger">SPECIAL OFFER</span>
+        }
+    </td>
     <td>@Model.Date.DateTime.ToShortDateString()</td>
-    <td class="bold">$@Model.Price</td>
+    <td class="bold">
+        @if (Model.IsOnSpecialOffer)
+        {
+            <div>
+                <span style="text-decoration: line-through; color: #aaa">$@Model.OriginalPrice</span>
+                <span style="color: red; font-weight: bold;">$@Model.Price</span>
+            </div>
+            <div class="savings-text">
+                <small style="color: green;">Save $@(Model.OriginalPrice - Model.Price) per ticket!</small>
+            </div>
+        }
+        else
+        {
+            <span>$@Model.Price</span>
+        }
+    </td>
     <td>
         <form asp-action="UpdateLine">
             <input type="hidden" name="LineId" value="@Model.LineId" />
@@ -17,7 +38,22 @@
             <button type="submit" class="filterButton">Update</button>
         </form>
     </td>
-    <td class="bold big">$@(Model.Price * Model.Quantity) </td>
+    <td class="bold big">
+        @if (Model.IsOnSpecialOffer)
+        {
+            <div>
+                <span style="text-decoration: line-through; color: #aaa">$@(Model.OriginalPrice * Model.Quantity)</span>
+                <span style="color: red; font-weight: bold;">$@(Model.Price * Model.Quantity)</span>
+            </div>
+            <div class="savings-text">
+                <small style="color: green;">Total savings: $@((Model.OriginalPrice - Model.Price) * Model.Quantity)!</small>
+            </div>
+        }
+        else
+        {
+            <span>$@(Model.Price * Model.Quantity)</span>
+        }
+    </td>
     <td>
         <a asp-action="RemoveLine" data-testid="RemoveLine" asp-route-lineId="@Model.LineId">
             <img class="cancelIcon" src="~/img/times.svg" />

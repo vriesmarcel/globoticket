@@ -1,4 +1,6 @@
 ﻿using GloboTicket.Frontend.Models.Api;
+using System;
+using System.Collections.Generic;
 
 namespace GloboTicket.Frontend.Services
 {
@@ -13,6 +15,7 @@ namespace GloboTicket.Frontend.Services
         public Guid BasketId { get; }
         public List<BasketLine> Lines { get; }
         public Guid UserId { get;  }
+        public string PromoCode { get; set; }
 
         public BasketLine Add(BasketLineForCreation line, Event @event)
         {
@@ -41,6 +44,45 @@ namespace GloboTicket.Frontend.Services
         public void Clear()
         {
             Lines.Clear();
+        }
+
+        public decimal CalculateTotalPrice(bool applyPromoCode = false)
+        {
+            decimal totalPrice = 0;
+            foreach (var line in Lines)
+            {
+                // Calculate price for each line
+                decimal linePrice = line.Price * line.TicketAmount;
+                
+                // Store if this item is on special offer (will help debugging)
+                bool isOnSpecialOffer = line.Event.IsOnSpecialOffer;
+                
+                // Apply promotional code discount (bug: applying to already discounted price)
+                if (applyPromoCode && !string.IsNullOrEmpty(PromoCode))
+                {
+                    decimal promoDiscount = GetPromoCodeDiscount(PromoCode);
+                    linePrice = linePrice * (1 - promoDiscount);
+                    
+                    // Bug: Incorrect rounding - truncating instead of rounding properly
+                    linePrice = Math.Truncate(linePrice * 100) / 100;
+                }
+                
+                totalPrice += linePrice;
+            }
+            
+            return totalPrice;
+        }
+
+        private decimal GetPromoCodeDiscount(string promoCode)
+        {
+            // Simple promo code logic
+            switch (promoCode.ToUpper())
+            {
+                case "SAVE10": return 0.10m;
+                case "SAVE15": return 0.15m;
+                case "SAVE25": return 0.25m;
+                default: return 0;
+            }
         }
     }
 }

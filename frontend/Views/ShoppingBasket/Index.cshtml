@@ -1,5 +1,11 @@
 ﻿@model IEnumerable<GloboTicket.Frontend.Models.View.BasketLineViewModel>
 
+@{
+    decimal originalTotal = Model.Sum(bl => bl.OriginalPrice * bl.Quantity);
+    decimal currentTotal = Model.Sum(bl => bl.Price * bl.Quantity);
+    bool hasSpecialOffers = Model.Any(bl => bl.IsOnSpecialOffer);
+}
+
 <table class="table">
     <thead>
         <tr class="columnHeader">
@@ -19,12 +25,60 @@
                     <img class="backIcon" src="~/img/arrow-down.svg" /> Back to event catalog
                 </a>
             </td>
-            <td class="bold big">$@Model.Sum(bl => bl.Price * bl.Quantity)</td>
+            @if (hasSpecialOffers)
+            {
+                <td class="bold big">
+                    <div style="margin-bottom: 5px;">
+                        <span style="font-size: 0.8em; color: #777;">Original subtotal:</span>
+                        <span style="text-decoration: line-through; color: #aaa">$@originalTotal</span>
+                    </div>
+                    <div style="margin-bottom: 5px;">
+                        <span style="font-size: 0.8em; color: #777;">Special offer subtotal:</span>
+                        <span style="color: red; font-weight: bold;">$@currentTotal</span>
+                    </div>
+                    
+                    @if (ViewBag.PromoCodeApplied != null && ViewBag.PromoCodeApplied)
+                    {
+                        <div style="margin-top: 10px; padding: 5px; border: 1px dashed #999; background-color: #f9f9f9;">
+                            <span style="font-size: 0.8em; color: #777;">With promo code:</span><br />
+                            <span style="color: green; font-weight: bold;">$@ViewBag.TotalWithDiscount</span>
+                            <div class="savings-text">
+                                <small style="color: green;">
+                                    Total savings: $@(originalTotal - (decimal)ViewBag.TotalWithDiscount)
+                                </small>
+                            </div>
+                        </div>
+                    }
+                </td>
+            }
+            else if (ViewBag.PromoCodeApplied != null && ViewBag.PromoCodeApplied)
+            {
+                <td class="bold big">
+                    <span style="text-decoration: line-through; color: #aaa">$@currentTotal</span><br />
+                    <span style="color: green; font-weight: bold;">$@ViewBag.TotalWithDiscount</span>
+                </td>
+            }
+            else
+            {
+                <td class="bold big">$@currentTotal</td>
+            }
         </tr>
     </tbody>
 </table>
 
 @if(Model.Count() > 0)
 {
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form asp-action="ApplyPromoCode" method="post" class="form-inline">
+                <div class="form-group">
+                    <label for="promoCode" class="mr-2">Promo Code:</label>
+                    <input type="text" name="promoCode" id="promoCode" class="form-control mr-2" placeholder="Enter code (e.g., SAVE25)" />
+                    <button type="submit" class="btn btn-secondary">Apply</button>
+                </div>
+                <small class="form-text text-muted">Available codes: SAVE10, SAVE15, SAVE25</small>
+            </form>
+        </div>
+    </div>
     <a asp-controller="Checkout" asp-action="Index" class="btn btn-primary">CHECKOUT</a>
 }

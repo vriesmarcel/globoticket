@@ -1,19 +1,42 @@
 ﻿@model GloboTicket.Frontend.Models.Api.Event
-<tr>
+<tr class="@(Model.IsOnSpecialOffer ? "special-offer-row" : "")">
     <td>
         <img class="artistPic" src="@Model.ImageUrl" alt="Artist pic" />
+        @if (Model.IsOnSpecialOffer)
+        {
+            <div class="promotion-badge">
+                <span class="badge badge-danger" style="position: absolute; top: 0; left: 0; transform: rotate(-15deg); font-size: 0.8em; padding: 5px;">20% OFF</span>
+            </div>
+        }
     </td>
     <td>
         @Model.Date.ToShortDateString()
     </td>
     <td>
         @Model.Name
+        @if (Model.IsOnSpecialOffer)
+        {
+            <span class="badge badge-danger">SPECIAL OFFER</span>
+        }
     </td>
     <td>
         @Model.Artist
     </td>
     <td class="bold big">
-        $@Model.Price
+        @if (Model.IsOnSpecialOffer)
+        {
+            <div>
+                <span style="text-decoration: line-through; color: #aaa">$@Model.OriginalPrice</span>
+                <span style="color: red; font-weight: bold;">$@Model.Price</span>
+            </div>
+            <div class="savings-text">
+                <small style="color: green;">Save $@(Model.OriginalPrice - Model.Price)!</small>
+            </div>
+        }
+        else
+        {
+            <span>$@Model.Price</span>
+        }
     </td>
     <td>
         <a class="btn-primary" type="button" asp-action="Detail" asp-route-eventId="@Model.EventId">PURCHASE DETAILS</a>

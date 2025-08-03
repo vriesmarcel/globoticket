@@ -1,5 +1,17 @@
 ﻿@model GloboTicket.Frontend.Models.View.EventListModel
 
+@{
+    var specialOffers = Model.Events.Where(e => e.IsOnSpecialOffer).ToList();
+}
+
+@if (specialOffers.Any())
+{
+    <div class="special-offers-banner" style="background-color: #ff6a00; color: white; padding: 15px; margin-bottom: 20px; border-radius: 5px; text-align: center;">
+        <h3><i class="fa fa-tags"></i> SPECIAL OFFERS AVAILABLE</h3>
+        <p>Don't miss our limited-time promotions with 20% off selected events!</p>
+    </div>
+}
+
 <div class="row">
     @if (Model.Events.Count() == 0)
     {

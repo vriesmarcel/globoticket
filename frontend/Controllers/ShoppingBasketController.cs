@@ -25,7 +25,16 @@ namespace GloboTicket.Frontend.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var basketLines = await basketService.GetLinesForBasket(Request.Cookies.GetCurrentBasketId(settings));
+            var basketId = Request.Cookies.GetCurrentBasketId(settings);
+            var basketLines = await basketService.GetLinesForBasket(basketId);
+            
+            // Check if ViewBag.TotalWithDiscount exists from session
+            if (TempData["PromoCodeApplied"] != null)
+            {
+                ViewBag.PromoCodeApplied = true;
+                ViewBag.TotalWithDiscount = await basketService.GetTotalPrice(basketId, true);
+            }
+            
             var lineViewModels = basketLines.Select(bl => new BasketLineViewModel
             {
                 LineId = bl.BasketLineId,
@@ -33,9 +42,11 @@ namespace GloboTicket.Frontend.Controllers
                 EventName = bl.Event.Name,
                 Date = bl.Event.Date,
                 Price = bl.Price,
+                OriginalPrice = bl.Event.IsOnSpecialOffer ? bl.Event.OriginalPrice : bl.Price,
+                IsOnSpecialOffer = bl.Event.IsOnSpecialOffer,
                 Quantity = bl.TicketAmount
-            }
-            );
+            });
+            
             return View(lineViewModels);
         }
 
@@ -66,6 +77,17 @@ namespace GloboTicket.Frontend.Controllers
             return RedirectToAction("Index");
         }
 
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApplyPromoCode(string promoCode)
+        {
+            var basketId = Request.Cookies.GetCurrentBasketId(settings);
+            await basketService.ApplyPromoCode(basketId, promoCode);
+            
+            // Set TempData to indicate promo code has been applied
+            TempData["PromoCodeApplied"] = true;
+            
+            return RedirectToAction("Index");
+        }
     }
 }

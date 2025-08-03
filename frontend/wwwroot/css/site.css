@@ -116,3 +116,26 @@ header {
     padding-top: 20px;
     padding-bottom: 20px;
 }
+
+/* Styles for special offer rows */
+.special-offer-row {
+    background-color: #fff8e6; /* Light yellow background */
+    position: relative;
+    border-left: 4px solid #ff6a00; /* Orange left border */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Subtle shadow for emphasis */
+    transition: all 0.3s ease;
+}
+
+.special-offer-row:hover {
+    background-color: #fff0d6; /* Slightly darker on hover */
+    transform: scale(1.01); /* Slight zoom effect */
+}
+
+.promotion-badge {
+    position: relative;
+}
+
+.savings-text {
+    margin-top: 4px;
+    font-weight: bold;
+}

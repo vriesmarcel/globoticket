@@ -13,5 +13,7 @@ namespace GloboTicket.Frontend.Services
         Task UpdateLine(Guid basketId, BasketLineForUpdate basketLineForUpdate);
         Task RemoveLine(Guid basketId, Guid lineId);
         Task ClearBasket(Guid currentBasketId);
+        Task<decimal> GetTotalPrice(Guid basketId, bool applyPromoCode = false);
+        Task ApplyPromoCode(Guid basketId, string promoCode);
     }
 }

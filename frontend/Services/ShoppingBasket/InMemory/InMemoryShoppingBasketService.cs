@@ -91,5 +91,24 @@ namespace GloboTicket.Frontend.Services
             }
             return Task.CompletedTask;
         }
+
+        public Task<decimal> GetTotalPrice(Guid basketId, bool applyPromoCode = false)
+        {
+            if (!baskets.TryGetValue(basketId, out var basket))
+            {
+                return Task.FromResult(0m);
+            }
+            
+            return Task.FromResult(basket.CalculateTotalPrice(applyPromoCode));
+        }
+
+        public Task ApplyPromoCode(Guid basketId, string promoCode)
+        {
+            if (baskets.TryGetValue(basketId, out var basket))
+            {
+                basket.PromoCode = promoCode;
+            }
+            return Task.CompletedTask;
+        }
     }
 }

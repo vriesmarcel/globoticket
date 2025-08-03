@@ -41,9 +41,15 @@ namespace GloboTicket.Catalog.Migrations
                     .IsRequired()
                     .HasColumnType("nvarchar(max)");
 
+                b.Property<bool>("IsOnSpecialOffer")
+                    .HasColumnType("bit");
+
                 b.Property<string>("Name")
                     .IsRequired()
                     .HasColumnType("nvarchar(max)");
+
+                b.Property<int>("OriginalPrice")
+                    .HasColumnType("int");
 
                 b.Property<int>("Price")
                     .HasColumnType("int");

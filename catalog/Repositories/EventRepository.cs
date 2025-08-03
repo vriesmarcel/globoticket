@@ -23,10 +23,12 @@ public class EventRepository : IEventRepository
             EventId = johnEgbertGuid,
             Name = "John Egbert Live",
             Price = 65,
+            OriginalPrice = 65,
             Artist = "John Egbert",
             Date = DateTime.Now.AddMonths(6),
             Description = "Join John for his farwell tour across 15 continents. John really needs no introduction since he has already mesmerized the world with his banjo.",
             ImageUrl = "/img/banjo.jpg",
+            IsOnSpecialOffer = false
         });
 
         events.Add(new Event
@@ -34,10 +36,12 @@ public class EventRepository : IEventRepository
             EventId = michaelJohnsonGuid,
             Name = "The State of Affairs: Michael Live!",
             Price = 85,
+            OriginalPrice = 85,
             Artist = "Michael Johnson",
             Date = DateTime.Now.AddMonths(9),
             Description = "Michael Johnson doesn't need an introduction. His 25 concert across the globe last year were seen by thousands. Can we add you to the list?",
             ImageUrl = "/img/michael.jpg",
+            IsOnSpecialOffer = false
         });
 
         events.Add(new Event
@@ -45,17 +49,25 @@ public class EventRepository : IEventRepository
             EventId = nickSailorGuid,
             Name = "To the Moon and Back",
             Price = 135,
+            OriginalPrice = 135,
             Artist = "Nick Sailor",
             Date = DateTime.Now.AddMonths(8),
             Description = "The critics are over the moon and so will you after you've watched this sing and dance extravaganza written by Nick Sailor, the man from 'My dad and sister'.",
             ImageUrl = "/img/musical.jpg",
+            IsOnSpecialOffer = false
         });
     }
 
     public Task<IEnumerable<Event>> GetEvents()
     {
-        // this just returning an in-memory list for now
-        return Task.FromResult((IEnumerable<Event>)events);
+        // Sort events by promotion status (promotions first) and then by date
+        var sortedEvents = events
+            .OrderByDescending(e => e.IsOnSpecialOffer)
+            .ThenBy(e => e.Date)
+            .ToList();
+            
+        // Return the sorted list
+        return Task.FromResult((IEnumerable<Event>)sortedEvents);
     }
 
 
@@ -77,8 +89,17 @@ public class EventRepository : IEventRepository
         LoadSampleData();
         // pick a random one to put on special offer
         var random = new Random();
-        var specialOfferEvent = events[random.Next(0,events.Count)];
+        var specialOfferEvent = events[random.Next(0, events.Count)];
+        
+        // Store the original price
+        specialOfferEvent.OriginalPrice = specialOfferEvent.Price;
+        
         // 20 percent off
         specialOfferEvent.Price = (int)(specialOfferEvent.Price * 0.8);
+        
+        // Mark as special offer
+        specialOfferEvent.IsOnSpecialOffer = true;
+        
+        logger.LogInformation($"Event {specialOfferEvent.Name} is now on special offer at ${specialOfferEvent.Price} (was ${specialOfferEvent.OriginalPrice})");
     }
 }
