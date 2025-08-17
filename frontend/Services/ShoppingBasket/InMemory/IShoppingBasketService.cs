@@ -15,5 +15,7 @@ namespace GloboTicket.Frontend.Services
         Task ClearBasket(Guid currentBasketId);
         Task<decimal> GetTotalPrice(Guid basketId, bool applyPromoCode = false);
         Task ApplyPromoCode(Guid basketId, string promoCode);
+        Task<bool> ShouldApplyAdministrationCost(Guid basketId);
+        Task<decimal> CalculateAdministrationCost(Guid basketId);
     }
 }

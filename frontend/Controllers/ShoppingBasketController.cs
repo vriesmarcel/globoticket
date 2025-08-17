@@ -28,6 +28,15 @@ namespace GloboTicket.Frontend.Controllers
             var basketId = Request.Cookies.GetCurrentBasketId(settings);
             var basketLines = await basketService.GetLinesForBasket(basketId);
             
+            // Calculate the subtotal (without admin costs)
+            decimal subtotal = basketLines.Sum(bl => bl.Price * bl.TicketAmount);
+            ViewBag.Subtotal = subtotal;
+            
+            // Check if admin costs should be applied
+            ViewBag.ShouldApplyAdminCost = await basketService.ShouldApplyAdministrationCost(basketId);
+            ViewBag.AdminCostAmount = await basketService.CalculateAdministrationCost(basketId);
+            ViewBag.AdminCostPercentage = 5;
+            
             // Check if ViewBag.TotalWithDiscount exists from session
             if (TempData["PromoCodeApplied"] != null)
             {

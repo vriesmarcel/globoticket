@@ -4,7 +4,36 @@
     decimal originalTotal = Model.Sum(bl => bl.OriginalPrice * bl.Quantity);
     decimal currentTotal = Model.Sum(bl => bl.Price * bl.Quantity);
     bool hasSpecialOffers = Model.Any(bl => bl.IsOnSpecialOffer);
+    
+    // Admin costs calculation
+    bool shouldApplyAdminCost = ViewBag.ShouldApplyAdminCost != null && ViewBag.ShouldApplyAdminCost;
+    decimal adminCostAmount = ViewBag.AdminCostAmount != null ? ViewBag.AdminCostAmount : 0;
+    int adminCostPercentage = ViewBag.AdminCostPercentage != null ? ViewBag.AdminCostPercentage : 5;
+    
+    // Calculate final total with admin costs
+    decimal finalTotal = currentTotal;
+    if (shouldApplyAdminCost)
+    {
+        finalTotal += adminCostAmount;
+    }
+    
+    // If promo code is applied, use that as the final total
+    if (ViewBag.PromoCodeApplied != null && ViewBag.PromoCodeApplied)
+    {
+        finalTotal = ViewBag.TotalWithDiscount;
+    }
 }
+
+<div class="row mb-3">
+    <div class="col-12">
+        @if (shouldApplyAdminCost)
+        {
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> An administration fee of @adminCostPercentage% will be added to orders under $500.
+            </div>
+        }
+    </div>
+</div>
 
 <table class="table">
     <thead>
@@ -37,6 +66,14 @@
                         <span style="color: red; font-weight: bold;">$@currentTotal</span>
                     </div>
                     
+                    @if (shouldApplyAdminCost)
+                    {
+                        <div style="margin-bottom: 5px;">
+                            <span style="font-size: 0.8em; color: #777;">Administration cost (@adminCostPercentage%):</span>
+                            <span style="color: #555; font-weight: bold;">$@adminCostAmount</span>
+                        </div>
+                    }
+                    
                     @if (ViewBag.PromoCodeApplied != null && ViewBag.PromoCodeApplied)
                     {
                         <div style="margin-top: 10px; padding: 5px; border: 1px dashed #999; background-color: #f9f9f9;">
@@ -51,16 +88,37 @@
                     }
                 </td>
             }
-            else if (ViewBag.PromoCodeApplied != null && ViewBag.PromoCodeApplied)
-            {
-                <td class="bold big">
-                    <span style="text-decoration: line-through; color: #aaa">$@currentTotal</span><br />
-                    <span style="color: green; font-weight: bold;">$@ViewBag.TotalWithDiscount</span>
-                </td>
-            }
             else
             {
-                <td class="bold big">$@currentTotal</td>
+                <td class="bold big">
+                    <div style="margin-bottom: 5px;">
+                        <span style="font-size: 0.8em; color: #777;">Subtotal:</span>
+                        <span style="font-weight: bold;">$@currentTotal</span>
+                    </div>
+                    
+                    @if (shouldApplyAdminCost)
+                    {
+                        <div style="margin-bottom: 5px;">
+                            <span style="font-size: 0.8em; color: #777;">Administration cost (@adminCostPercentage%):</span>
+                            <span style="color: #555; font-weight: bold;">$@adminCostAmount</span>
+                        </div>
+                    }
+                    
+                    @if (ViewBag.PromoCodeApplied != null && ViewBag.PromoCodeApplied)
+                    {
+                        <div style="margin-top: 10px; padding: 5px; border: 1px dashed #999; background-color: #f9f9f9;">
+                            <span style="font-size: 0.8em; color: #777;">Final total with promo code:</span><br />
+                            <span style="color: green; font-weight: bold;">$@ViewBag.TotalWithDiscount</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="margin-top: 5px;">
+                            <span style="font-size: 0.8em; color: #777;">Final total:</span><br />
+                            <span style="font-weight: bold;">$@finalTotal</span>
+                        </div>
+                    }
+                </td>
             }
         </tr>
     </tbody>

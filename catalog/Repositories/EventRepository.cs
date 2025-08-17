@@ -61,7 +61,7 @@ public class EventRepository : IEventRepository
     public Task<IEnumerable<Event>> GetEvents()
     {
         // Sort events by promotion status (promotions first) and then by date
-        var sortedEvents = events
+        var sortedEvents = events.ToList()
             .OrderByDescending(e => e.IsOnSpecialOffer)
             .ThenBy(e => e.Date)
             .ToList();
@@ -73,7 +73,7 @@ public class EventRepository : IEventRepository
 
     public Task<Event> GetEventById(Guid eventId)
     {
-        var @event = events.FirstOrDefault(e => e.EventId == eventId);
+        var @event = events.ToList().FirstOrDefault(e => e.EventId == eventId);
         if (@event == null)
         {
             throw new InvalidOperationException("Event not found");

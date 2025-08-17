@@ -110,5 +110,27 @@ namespace GloboTicket.Frontend.Services
             }
             return Task.CompletedTask;
         }
+        
+        public Task<bool> ShouldApplyAdministrationCost(Guid basketId)
+        {
+            if (!baskets.TryGetValue(basketId, out var basket))
+            {
+                return Task.FromResult(false);
+            }
+            
+            decimal subtotal = basket.CalculateTotalPrice();
+            return Task.FromResult(subtotal < 500m);
+        }
+        
+        public Task<decimal> CalculateAdministrationCost(Guid basketId)
+        {
+            if (!baskets.TryGetValue(basketId, out var basket))
+            {
+                return Task.FromResult(0m);
+            }
+            
+            decimal subtotal = basket.CalculateTotalPrice();
+            return Task.FromResult(subtotal < 500m ? Math.Round(subtotal * 0.05m, 2) : 0m);
+        }
     }
 }

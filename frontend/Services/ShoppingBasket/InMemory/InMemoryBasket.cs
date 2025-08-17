@@ -70,7 +70,33 @@ namespace GloboTicket.Frontend.Services
                 totalPrice += linePrice;
             }
             
+            // Add administration costs if applicable
+            if (ShouldApplyAdministrationCost(totalPrice))
+            {
+                totalPrice += CalculateAdministrationCost(totalPrice);
+            }
+            
             return totalPrice;
+        }
+        
+        /// <summary>
+        /// Calculates administration cost (5% of total price) if the total is less than $500
+        /// </summary>
+        /// <param name="totalPrice">The current total price</param>
+        /// <returns>The administration cost amount</returns>
+        public decimal CalculateAdministrationCost(decimal totalPrice)
+        {
+            return Math.Round(totalPrice * 0.05m, 2);
+        }
+        
+        /// <summary>
+        /// Determines if administration costs should be applied
+        /// </summary>
+        /// <param name="totalPrice">The current total price</param>
+        /// <returns>True if administration costs should be applied, false otherwise</returns>
+        public bool ShouldApplyAdministrationCost(decimal totalPrice)
+        {
+            return totalPrice < 500m;
         }
 
         private decimal GetPromoCodeDiscount(string promoCode)
