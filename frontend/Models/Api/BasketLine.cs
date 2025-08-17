@@ -8,7 +8,7 @@ namespace GloboTicket.Frontend.Models.Api
         public Guid BasketId { get; set; }
         public Guid EventId { get; set; }
         public int TicketAmount { get; set; }
-        public int Price { get; set; }
+        public decimal Price { get; set; }
         public Event Event { get; set; }
     }
 }
