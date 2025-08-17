@@ -119,7 +119,10 @@ namespace GloboTicket.Frontend.Services
             }
             
             decimal subtotal = basket.CalculateTotalPrice();
-            return Task.FromResult(subtotal < 500m);
+            
+            // Bug: Using float for comparison (less precision)
+            float subtotalAsFloat = (float)subtotal;
+            return Task.FromResult(subtotalAsFloat < 500.0f);
         }
         
         public Task<decimal> CalculateAdministrationCost(Guid basketId)
@@ -130,7 +133,13 @@ namespace GloboTicket.Frontend.Services
             }
             
             decimal subtotal = basket.CalculateTotalPrice();
-            return Task.FromResult(subtotal < 500m ? Math.Round(subtotal * 0.05m, 2) : 0m);
+            
+            // Bug: Using float for comparison (less precision)
+            // The administration cost should be removed at exactly 500, but this might fail
+            float subtotalAsFloat = (float)subtotal;
+            bool shouldApply = subtotalAsFloat < 500.0f;
+            
+            return Task.FromResult(shouldApply ? Math.Round(subtotal * 0.05m, 2) : 0m);
         }
     }
 }

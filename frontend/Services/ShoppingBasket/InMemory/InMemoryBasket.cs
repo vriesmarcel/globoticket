@@ -96,7 +96,10 @@ namespace GloboTicket.Frontend.Services
         /// <returns>True if administration costs should be applied, false otherwise</returns>
         public bool ShouldApplyAdministrationCost(decimal totalPrice)
         {
-            return totalPrice < 500m;
+            // Bug: Using float instead of decimal for comparison
+            // This introduces a precision error around the 500 threshold
+            float totalPriceFloat = (float)totalPrice;
+            return totalPriceFloat < 500.0f;
         }
 
         private decimal GetPromoCodeDiscount(string promoCode)
