@@ -14,6 +14,15 @@ namespace GloboTicket.Catalog.DbContexts
         {
             base.OnModelCreating(modelBuilder);
 
+            // Configure decimal precision for Price and OriginalPrice
+            modelBuilder.Entity<Event>()
+                .Property(e => e.Price)
+                .HasPrecision(10, 2);
+
+            modelBuilder.Entity<Event>()
+                .Property(e => e.OriginalPrice)
+                .HasPrecision(10, 2);
+
             // Original 5 events
             SeedOriginalEvents(modelBuilder);
 
@@ -31,8 +40,8 @@ namespace GloboTicket.Catalog.DbContexts
             {
                 EventId = Guid.Parse("{EE272F8B-6096-4CB6-8625-BB4BB2D89E8B}"),
                 Name = "John Egbert Live",
-                Price = 65,
-                OriginalPrice = 65,
+                Price = 64.99m,
+                OriginalPrice = 64.99m,
                 Artist = "John Egbert",
                 Date = DateTime.Now.AddMonths(6),
                 Description = "Join John for his farwell tour across 15 continents. John really needs no introduction since he has already mesmerized the world with his banjo.",
@@ -44,8 +53,8 @@ namespace GloboTicket.Catalog.DbContexts
             {
                 EventId = Guid.Parse("{3448D5A4-0F72-4DD7-BF15-C14A46B26C00}"),
                 Name = "The State of Affairs: Michael Live!",
-                Price = 85,
-                OriginalPrice = 85,
+                Price = 84.99m,
+                OriginalPrice = 84.99m,
                 Artist = "Michael Johnson",
                 Date = DateTime.Now.AddMonths(9),
                 Description = "Michael Johnson doesn't need an introduction. His 25 concert across the globe last year were seen by thousands. Can we add you to the list?",
@@ -57,8 +66,8 @@ namespace GloboTicket.Catalog.DbContexts
             {
                 EventId = Guid.Parse("{B419A7CA-3321-4F38-BE8E-4D7B6A529319}"),
                 Name = "Clash of the DJs",
-                Price = 85,
-                OriginalPrice = 85,
+                Price = 84.99m,
+                OriginalPrice = 84.99m,
                 Artist = "DJ 'The Mike'",
                 Date = DateTime.Now.AddMonths(4),
                 Description = "DJs from all over the world will compete in this epic battle for eternal fame.",
@@ -70,8 +79,8 @@ namespace GloboTicket.Catalog.DbContexts
             {
                 EventId = Guid.Parse("{62787623-4C52-43FE-B0C9-B7044FB5929B}"),
                 Name = "Spanish guitar hits with Manuel",
-                Price = 25,
-                OriginalPrice = 25,
+                Price = 24.99m,
+                OriginalPrice = 24.99m,
                 Artist = "Manuel Santinonisi",
                 Date = DateTime.Now.AddMonths(4),
                 Description = "Get on the hype of Spanish Guitar concerts with Manuel.",
@@ -83,8 +92,8 @@ namespace GloboTicket.Catalog.DbContexts
             {
                 EventId = Guid.Parse("{ADC42C09-08C1-4D2C-9F96-2D15BB1AF299}"),
                 Name = "To the Moon and Back",
-                Price = 135,
-                OriginalPrice = 135,
+                Price = 134.99m,
+                OriginalPrice = 134.99m,
                 Artist = "Nick Sailor",
                 Date = DateTime.Now.AddMonths(8),
                 Description = "The critics are over the moon and so will you after you've watched this sing and dance extravaganza written by Nick Sailor, the man from 'My dad and sister'.",
@@ -160,7 +169,12 @@ namespace GloboTicket.Catalog.DbContexts
                 var eventName = $"{artist}: {tourName}";
                 var description = string.Format(descriptions[index % descriptions.Length], artist);
                 var imageUrl = images[index % images.Length];
-                var price = 20 + ((index % 19) * 10);
+                
+                // Calculate base price using modulo operation (20, 30, 40, etc.)
+                var basePrice = 20 + ((index % 19) * 10);
+                // Convert to psychological price (e.g., 19.99, 29.99, 39.99)
+                var price = basePrice - 0.01m;
+                
                 var date = DateTime.Now.AddDays(30 + (index * 3));
 
                 modelBuilder.Entity<Event>().HasData(new Event

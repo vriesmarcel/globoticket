@@ -64,8 +64,9 @@ public class SqlEventRepository : IEventRepository
         // Store the original price before discount
         specialOfferEvent.OriginalPrice = specialOfferEvent.Price;
         
-        // Apply 20 percent discount
-        specialOfferEvent.Price = (int)(specialOfferEvent.Price * 0.8);
+        // Apply 20 percent discount and round to psychological price
+        var discountedPrice = specialOfferEvent.Price * 0.8m;
+        specialOfferEvent.Price = Math.Round(discountedPrice - 0.01m, 2);
         
         // Mark as special offer
         specialOfferEvent.IsOnSpecialOffer = true;
