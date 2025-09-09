@@ -78,10 +78,10 @@ jobs:
           homepage: ${{ needs.deploy.outputs.homepage }}
       
       - name: Build & Install
-        run: dotnet build Tests.Playwright/Tests.Playwright.csproj
+        run: dotnet build PlaywrightTests/PlaywrightTests.csproj
       
       - name: Install browsers
-        run: pwsh Tests.Playwright/bin/Debug/net8.0/playwright.ps1 install
+        run: pwsh PlaywrightTests/bin/Debug/net8.0/playwright.ps1 install
             
       - name: Azure Login
         uses: azure/login@v2
@@ -89,7 +89,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           
  #     - name: Run tests
- #       run: dotnet test Tests.Playwright/Tests.Playwright.csproj --logger "microsoft-playwright-testing" -- NUnit.NumberOfTestWorkers=20 --settings:.runsettings
+ #       run: dotnet test PlaywrightTests/PlaywrightTests.csproj --logger "microsoft-playwright-testing" -- NUnit.NumberOfTestWorkers=20 --settings:.runsettings
  #       env: 
  #         homepage: ${{ needs.deploy.outputs.homepage }}
  #         PLAYWRIGHT_SERVICE_URL: "wss://westeurope.api.playwright.microsoft.com/accounts/westeurope_551a8bf6-0033-4f0f-9bb1-bfd1342d2fe3/browsers"
