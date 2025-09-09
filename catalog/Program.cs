@@ -6,11 +6,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddHttpClient();
-//builder.Services.AddSingleton<IEventRepository, EventRepository>();
+builder.Services.AddSingleton<IEventRepository, EventRepository>();
 //using "real" database
-builder.Services.AddDbContext<EventCatalogDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped<IEventRepository, SqlEventRepository>();
+//builder.Services.AddDbContext<EventCatalogDbContext>(options =>
+//        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//builder.Services.AddScoped<IEventRepository, SqlEventRepository>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -21,21 +21,21 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    try
-    {
-        using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
-        {
-            var context = serviceScope.ServiceProvider.GetRequiredService<EventCatalogDbContext>();
+    //try
+    //{
+    //    using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
+    //    {
+    //        var context = serviceScope.ServiceProvider.GetRequiredService<EventCatalogDbContext>();
             
-            // Delete and recreate the database to add our 500 new events
-            context.Database.EnsureDeleted();
-            context.Database.EnsureCreated();
-        }
-    }
-    catch (Exception e)
-    {
-        Console.WriteLine(e.Message);
-    }
+    //        // Delete and recreate the database to add our 500 new events
+    //        context.Database.EnsureDeleted();
+    //        context.Database.EnsureCreated();
+    //    }
+    //}
+    //catch (Exception e)
+    //{
+    //    Console.WriteLine(e.Message);
+    //}
     app.UseSwagger();
     app.UseSwaggerUI();
 }
