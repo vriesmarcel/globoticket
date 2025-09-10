@@ -88,7 +88,7 @@ public class UnitTest1 : PageTest
         await page.FillAsync("#Address", "a");
         await page.FillAsync("#Town", "b");
         await page.FillAsync("#PostalCode", "1212vb");
-        await page.FillAsync("#CreditCard", "1111222223333344444");
+        await page.FillAsync("#CreditCard", "1111222233334444");
         await page.FillAsync("#CreditCardDate", "12/24");
         await page.ClickAsync("#Email");
         await page.ClickAsync(".btn");
